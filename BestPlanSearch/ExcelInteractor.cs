@@ -14,7 +14,7 @@ public static class ExcelInteractor
         return list;
     }
 
-    Plan GetPlanFromRow(int currRow, ExcelWorksheet worksheet)
+    private static Plan GetPlanFromRow(int currRow, ExcelWorksheet worksheet)
     {
         var operatorName = worksheet.Cells[currRow, 1].Text;
 
@@ -94,5 +94,7 @@ public static class ExcelInteractor
                                 contractDuration,
                                 pricePerYear,
                                 include5g);
+
+        return newPlan;
     }
 }
