@@ -81,6 +81,7 @@
     <Compile Include="Algo.cs" />
     <Compile Include="AppState.cs" />
     <Compile Include="ExcelInteractor.cs" />
+    <Compile Include="ExcelPlan.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

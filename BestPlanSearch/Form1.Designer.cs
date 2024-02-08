@@ -148,7 +148,7 @@
             // 
             this.NUDGB.Location = new System.Drawing.Point(382, 25);
             this.NUDGB.Maximum = new decimal(new int[] {
-            9999,
+            999,
             0,
             0,
             0});
@@ -160,7 +160,7 @@
             // 
             this.NUDMin.Location = new System.Drawing.Point(508, 25);
             this.NUDMin.Maximum = new decimal(new int[] {
-            9999,
+            999,
             0,
             0,
             0});
@@ -173,7 +173,7 @@
             // 
             this.NUDText.Location = new System.Drawing.Point(633, 25);
             this.NUDText.Maximum = new decimal(new int[] {
-            9999,
+            999,
             0,
             0,
             0});
@@ -186,7 +186,7 @@
             // 
             this.NUDDuration.Location = new System.Drawing.Point(379, 147);
             this.NUDDuration.Maximum = new decimal(new int[] {
-            9999,
+            999,
             0,
             0,
             0});
@@ -199,7 +199,7 @@
             // 
             this.NUDPrice.Location = new System.Drawing.Point(505, 147);
             this.NUDPrice.Maximum = new decimal(new int[] {
-            9999,
+            999,
             0,
             0,
             0});

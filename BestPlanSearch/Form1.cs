@@ -31,11 +31,17 @@ namespace BestPlanSearch
             AppState.ExcelFile = new ExcelPackage(new FileInfo("C:\\Users\\skude\\source\\repos\\BestPlanSearch\\BestPlanSearch\\Balticum_Network_Plans.xlsx"));
             // create a new ExcelWorksheet object and set it to the first worksheet in the ExcelFile
             ExcelWorksheet worksheet = AppState.ExcelFile.Workbook.Worksheets[0];
+            //set data from excel directly to grid
             // create a new List of Plan objects and set it to the result of calling GetPlansFromExcel with the worksheet
             List<Plan> plans = ExcelInteractor.GetPlansFromExcel(worksheet);
             // create a new BindingSource object and set its DataSource property to the plans list
             BindingSource source = new BindingSource();
-            source.DataSource = plans;
+            List<ExcelPlan> excelPlans = new List<ExcelPlan>();
+            foreach (var plan in plans)
+            {
+                excelPlans.Add(new ExcelPlan(plan));
+            }
+            source.DataSource = excelPlans;
             // set the DataSource property of the dataGridView1 to the BindingSource
             dataGridView1.DataSource = source;
         }
@@ -156,24 +162,17 @@ namespace BestPlanSearch
             // using static Algo class to determine the best plan
             Plan bestPlan = Algo.DetermineBestPlan(plans, args);
 
-            //Write best plan all data to the LbResult, like name, data, new line
+            //Write best plan all data to the LbResult, like name, data, new line if data is more than MaxBand MaxMin MaxSms MaxContract set string to unlimited
+
             LbResult.Text =
-                "Operator Name: " +
-                bestPlan.OperatorName + "\n " +
-                "Plan Name: " +
-                bestPlan.PlanName + "\n " +
-                "Internet (GB):" +
-                bestPlan.InternetBandwidthGB + "\n " +
-                "Phone Minutes:" +
-                bestPlan.PhoneMinutes + "\n " +
-                "SMS Texts:" +
-                bestPlan.SMSTexts + "\n " +
-                "Contract Duration:" +
-                bestPlan.ContractDuration + "\n " +
-                "Price Per Year:" +
-                bestPlan.PricePerYear + "\n " +
-                "5G: " +
-                bestPlan.Includes5G;
+                bestPlan.OperatorName + "\n" + 
+                "Internet: " + (bestPlan.InternetBandwidthGB > ExcelInteractor.MaxBand ? "Unlimited" : bestPlan.InternetBandwidthGB.ToString()) + " GB" + "\n" + 
+                "Phone: " + (bestPlan.PhoneMinutes > ExcelInteractor.MaxMin ? "Unlimited" : bestPlan.PhoneMinutes.ToString()) + " min" + "\n" + 
+                "SMS: " + (bestPlan.SMSTexts > ExcelInteractor.MaxSms ? "Unlimited" : bestPlan.SMSTexts.ToString()) + " SMS" + "\n" + 
+                "Duration: " + (bestPlan.ContractDuration > ExcelInteractor.MaxContract ? "Unlimited" : bestPlan.ContractDuration.ToString()) + " months" + "\n" + 
+                "Price: " + bestPlan.PricePerYear.ToString() + " EUR" + "\n" + 
+                "5G: " + (bestPlan.Includes5G == true ? "Yes" : "No");
+
         }
     }
 }

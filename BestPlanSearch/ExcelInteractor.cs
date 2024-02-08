@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 public static class ExcelInteractor
 {
+    public static float MaxBand = 0;
+    public static int MaxMin = 0;
+    public static int MaxSms = 0;
+    public static int MaxContract = 0;
     public static List<Plan> GetPlansFromExcel(ExcelWorksheet worksheet)
     {
         List<Plan> list = new List<Plan>();
@@ -11,7 +15,7 @@ public static class ExcelInteractor
         {
             list.Add(GetPlanFromRow(currRow, worksheet));
         }
-        return list;
+        return SetUnlimitedInPlans(list);
     }
 
     private static Plan GetPlanFromRow(int currRow, ExcelWorksheet worksheet)
@@ -25,13 +29,10 @@ public static class ExcelInteractor
         if (!bandwidthGbEx.Contains("Unlimited"))
         {
             float num = float.Parse(bandwidthGbEx);
-            if (num == 0)
+            bandwidthGB = num;
+            if (bandwidthGB > MaxBand)
             {
-                bandwidthGB = -999;
-            }
-            else
-            {
-                bandwidthGB = num;
+                MaxBand = bandwidthGB;
             }
         }
 
@@ -40,13 +41,10 @@ public static class ExcelInteractor
         if (!phoneMinutesEx.Contains("Unlimited"))
         {
             int num = int.Parse(phoneMinutesEx);
-            if (num == 0)
+            phoneMinutes = num;
+            if (phoneMinutes > MaxMin)
             {
-                phoneMinutes = -999;
-            }
-            else
-            {
-                phoneMinutes = num;
+                MaxMin = phoneMinutes;
             }
         }
 
@@ -55,13 +53,10 @@ public static class ExcelInteractor
         if (!smsTextsEx.Contains("Unlimited"))
         {
             int num = int.Parse(smsTextsEx);
-            if (num == 0)
+            smsTexts = num;
+            if (smsTexts > MaxMin)
             {
-                smsTexts = -999;
-            }
-            else
-            {
-                smsTexts = num;
+                MaxMin = smsTexts;
             }
         }
 
@@ -69,11 +64,15 @@ public static class ExcelInteractor
         int contractDuration = 999;
         if (contractDurationEx.Contains("No contract"))
         {
-            contractDuration = -999;
+            contractDuration = 0;
         }
         else if (!contractDurationEx.Contains("Rolling"))
         {
             contractDuration = int.Parse(contractDurationEx);
+            if (contractDuration > MaxContract)
+            {
+                MaxContract = contractDuration;
+            }
         }
 
         var pricePerYearEx = worksheet.Cells[currRow, 7].Text;
@@ -96,5 +95,47 @@ public static class ExcelInteractor
                                 include5g);
 
         return newPlan;
+    }
+
+    private static List<Plan> SetUnlimitedInPlans(List<Plan> plans)
+    {
+        List<Plan> newPlans = new List<Plan>();
+        for (int i = 0; i < plans.Count; i++)
+        {
+            float bw = plans[i].InternetBandwidthGB;
+            int min = plans[i].PhoneMinutes;
+            int sms = plans[i].SMSTexts;
+            int contractDuration = plans[i].ContractDuration;
+
+            if (plans[i].InternetBandwidthGB == 999)
+            {
+                bw = MaxBand + 1;
+            }
+            if (plans[i].PhoneMinutes == 999)
+            {
+                min = MaxMin + 1;
+            }
+            if (plans[i].SMSTexts == 999)
+            {
+                sms = MaxSms + 1;
+            }
+            if (plans[i].ContractDuration == 999)
+            {
+                contractDuration = MaxContract + 1;
+            }
+
+
+            Plan newPlan = new Plan(plans[i].OperatorName,
+                                    plans[i].PlanName,
+                                    bw,
+                                    min,
+                                    sms,
+                                    contractDuration,
+                                    plans[i].PricePerYear,
+                                    plans[i].Includes5G
+                                    );
+            newPlans.Add( newPlan );
+        }
+        return newPlans;
     }
 }
